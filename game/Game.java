@@ -7,6 +7,10 @@ import java.util.List;
  * Class representing a game of chess.
  * <p>
  * This class is currently incomplete and being worked on.
+ * <p>
+ * Much of the code in this class was inspired by Sebastian Lague's
+ * implementation of chess in <a
+ * href=https://www.youtube.com/watch?v=U4ogK0MIzqk>this video</a>.
  * 
  * @author Archer Murray
  */
@@ -229,7 +233,26 @@ public class Game
 		return pieceChar;
 	}
 	
-	// -------- Constructor --------
+	/**
+	 * Returns the passed-in move as represented as an array of two arrays of
+	 * indices, where the first array represents the starting square of the move
+	 * and the second represents the destination square.
+	 * 
+	 * @param move The move.
+	 * @return An array of arrays of indices as described above.
+	 */
+	private static int[][] moveToIndices(String move)
+	{
+		if (move.length() != 4) {
+			Game.illegalArg("Invalid move '" + move + "'");
+		}
+		int[][] ret = new int[2][2];
+		ret[0] = Game.algebraicToIndices(move.substring(0, 2));
+		ret[1] = Game.algebraicToIndices(move.substring(2));
+		return ret;
+	}
+	
+	// -------- Constructors --------
 	
 	/**
 	 * Creates a new Game with the initial board setup.
@@ -247,6 +270,27 @@ public class Game
 		this.fmrCounter = 0;
 		this.moveNumber = 1;
 		this.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+	}
+	
+	/**
+	 * Copy constructor.
+	 * <p>
+	 * Creates a new Game with exactly the same state as the passed-in Game.
+	 * 
+	 * @param g The Game to copy the state of.
+	 */
+	public Game(Game g)
+	{
+		this.board = new int[8][8];
+		this.colorToMove = g.colorToMove;
+		this.whiteCanCastleKingside = g.whiteCanCastleKingside;
+		this.whiteCanCastleQueenside = g.whiteCanCastleQueenside;
+		this.blackCanCastleKingside = g.blackCanCastleKingside;
+		this.blackCanCastleQueenside = g.blackCanCastleQueenside;
+		this.enPassantRank = g.enPassantRank;
+		this.enPassantFile = g.enPassantFile;
+		this.fmrCounter = g.fmrCounter;
+		this.moveNumber = g.moveNumber;
 	}
 	
 	// -------- FEN operations --------
@@ -532,7 +576,11 @@ public class Game
 		}
 		switch (Game.getPieceType(piece)) {
 		case Game.PAWN:
-			ret.addAll(this.getPawnMovesFrom(rank, file));
+			if (this.colorToMove == Game.WHITE) {
+				ret.addAll(this.getWhitePawnMovesFrom(rank, file));
+			} else if (this.colorToMove == Game.BLACK) {
+				ret.addAll(this.getBlackPawnMovesFrom(rank, file));
+			}
 			break;
 		case Game.KNIGHT:
 			ret.addAll(this.getKnightMovesFrom(rank, file));
@@ -556,13 +604,13 @@ public class Game
 	
 	/**
 	 * Returns a list containing the destination squares, in algebraic notation,
-	 * of all pseudo-legal pawn moves from the passed-in rank and file.
+	 * of all pseudo-legal white pawn moves from the passed-in rank and file.
 	 * 
 	 * @param rank The rank index of the pawn.
 	 * @param file The file index of the pawn.
 	 * @return A list of squares as described above.
 	 */
-	private List<String> getPawnMovesFrom(int rank, int file)
+	private List<String> getWhitePawnMovesFrom(int rank, int file)
 	{
 		List<String> ret = new ArrayList<String>();
 		// Check the one-space pawn move
@@ -580,6 +628,49 @@ public class Game
 			}
 			if (file < 7 && this.isOpponentColor(rank + 1, file + 1)) {
 				ret.add(Game.indicesToAlgebraic(rank + 1, file + 1));
+			}
+			// Check en passant capture
+			if (rank == this.enPassantRank - 1 &&
+					Math.abs(file - this.enPassantFile) == 1) {
+				ret.add(Game.indicesToAlgebraic(this.enPassantRank,
+						this.enPassantFile));
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Returns a list containing the destination squares, in algebraic notation,
+	 * of all pseudo-legal black pawn moves from the passed-in rank and file.
+	 * 
+	 * @param rank The rank index of the pawn.
+	 * @param file The file index of the pawn.
+	 * @return A list of squares as described above.
+	 */
+	private List<String> getBlackPawnMovesFrom(int rank, int file)
+	{
+		List<String> ret = new ArrayList<String>();
+		// Check the one-space pawn move
+		if (rank > 0 && this.isEmpty(rank - 1, file)) {
+			ret.add(Game.indicesToAlgebraic(rank - 1, file));
+			// Check the two-space pawn move
+			if (rank == 6 && this.isEmpty(rank - 2, file)) {
+				ret.add(Game.indicesToAlgebraic(rank - 2, file));
+			}
+		}
+		// Check captures
+		if (rank > 0) {
+			if (file > 0 && this.isOpponentColor(rank - 1, file - 1)) {
+				ret.add(Game.indicesToAlgebraic(rank - 1, file - 1));
+			}
+			if (file < 7 && this.isOpponentColor(rank - 1, file + 1)) {
+				ret.add(Game.indicesToAlgebraic(rank - 1, file + 1));
+			}
+			// Check en passant capture
+			if (rank == this.enPassantRank + 1 &&
+					Math.abs(file - this.enPassantFile) == 1) {
+				ret.add(Game.indicesToAlgebraic(this.enPassantRank,
+						this.enPassantFile));
 			}
 		}
 		return ret;
@@ -694,7 +785,29 @@ public class Game
 				ret.add(Game.indicesToAlgebraic(newRank, newFile));
 			}
 		}
-		// TODO: Check castling
+		// Check castling
+		if (rank == 0 && file == 4) {
+			if (this.whiteCanCastleKingside && this.board[0][5] == Game.NONE &&
+					this.board[0][6] == Game.NONE) {
+				ret.add(Game.indicesToAlgebraic(0, 6));
+			}
+			if (this.whiteCanCastleQueenside && this.board[0][1] == Game.NONE &&
+					this.board[0][2] == Game.NONE &&
+					this.board[0][3] == Game.NONE) {
+				ret.add(Game.indicesToAlgebraic(0, 2));
+			}
+		}
+		if (rank == 7 && file == 4) {
+			if (this.blackCanCastleKingside && this.board[7][5] == Game.NONE &&
+					this.board[7][6] == Game.NONE) {
+				ret.add(Game.indicesToAlgebraic(7, 6));
+			}
+			if (this.blackCanCastleQueenside && this.board[7][1] == Game.NONE &&
+					this.board[7][2] == Game.NONE &&
+					this.board[7][3] == Game.NONE) {
+				ret.add(Game.indicesToAlgebraic(7, 2));
+			}
+		}
 		return ret;
 	}
 	
@@ -724,6 +837,17 @@ public class Game
 	}
 	
 	/**
+	 * Returns true if the player to move is in check; false otherwise.
+	 * 
+	 * @return True if the player to move is in check; false otherwise.
+	 */
+	public boolean isInCheck()
+	{
+		// TODO: Complete this
+		return false;
+	}
+	
+	/**
 	 * Returns a list containing all legal moves.
 	 * <p>
 	 * Each move is a string in the format "a1b2", where a1 is the starting
@@ -749,7 +873,120 @@ public class Game
 	 */
 	public void makeMove(String move)
 	{
-		// TODO: Complete this
+		// Change position of piece
+		int[][] indices = Game.moveToIndices(move);
+		int[] start = indices[0];
+		int[] dest = indices[1];
+		int piece = this.board[start[0]][start[1]];
+		boolean captureMade = this.board[dest[0]][dest[1]] != Game.NONE;
+		this.board[dest[0]][dest[1]] = piece;
+		this.board[start[0]][start[1]] = Game.NONE;
+		
+		// Handle castling
+		if (start[0] == 0 && start[1] == 4) {
+			// Starting square of white king
+			this.whiteCanCastleKingside = false;
+			this.whiteCanCastleQueenside = false;
+			if (dest[1] == 2) {
+				// Castling queenside
+				this.board[0][3] = this.board[0][0];
+				this.board[0][0] = Game.NONE;
+			}
+			if (dest[1] == 6) {
+				// Castling kingside
+				this.board[0][5] = this.board[0][7];
+				this.board[0][7] = Game.NONE;
+			}
+		}
+		if (start[0] == 0 && start[1] == 0) {
+			// Starting square of white queenside rook
+			this.whiteCanCastleQueenside = false;
+		}
+		if (start[0] == 0 && start[1] == 7) {
+			// Starting square of white kingside rook
+			this.whiteCanCastleKingside = false;
+		}
+		if (start[0] == 7 && start[1] == 4) {
+			// Starting square of black king
+			this.blackCanCastleKingside = false;
+			this.blackCanCastleQueenside = false;
+			if (dest[1] == 2) {
+				// Castling queenside
+				this.board[7][3] = this.board[7][0];
+				this.board[7][0] = Game.NONE;
+			}
+			if (dest[1] == 6) {
+				// Castling kingside
+				this.board[7][5] = this.board[7][7];
+				this.board[7][7] = Game.NONE;
+			}
+		}
+		if (start[0] == 7 && start[1] == 0) {
+			// Starting square of black queenside rook
+			this.blackCanCastleQueenside = false;
+		}
+		if (start[0] == 7 && start[1] == 7) {
+			// Starting square of black kingside rook
+			this.blackCanCastleKingside = false;
+		}
+		
+		// Handle captures with regards to castling
+		if (dest[0] == 0 && dest[1] == 0) {
+			// Starting square of white queenside rook
+			this.whiteCanCastleQueenside = false;
+		}
+		if (dest[0] == 0 && dest[1] == 7) {
+			// Starting square of white kingside rook
+			this.whiteCanCastleKingside = false;
+		}
+		if (dest[0] == 7 && dest[1] == 0) {
+			// Starting square of black queenside rook
+			this.blackCanCastleQueenside = false;
+		}
+		if (dest[0] == 7 && dest[1] == 7) {
+			// Starting square of black kingside rook
+			this.blackCanCastleKingside = false;
+		}
+		
+		// Handle en passant
+		if (Game.getPieceType(piece) == Game.PAWN &&
+				Math.abs(dest[0] - start[0]) == 2) {
+			// Two-space pawn move; create en passant square
+			this.enPassantRank = (start[0] + dest[0]) / 2;
+			this.enPassantFile = start[1];
+		} else {
+			if (Game.getPieceType(piece) == Game.PAWN &&
+					dest[0] == this.enPassantRank &&
+					dest[1] == this.enPassantFile) {
+				// Make en passant capture
+				if (this.colorToMove == Game.WHITE) {
+					this.board[dest[0] - 1][dest[1]] = Game.NONE;
+				} else if (this.colorToMove == Game.BLACK) {
+					this.board[dest[0] + 1][dest[1]] = Game.NONE;
+				}
+				captureMade = true;
+			}
+			// Remove en passant square
+			this.enPassantRank = -1;
+			this.enPassantFile = -1;
+		}
+		
+		// Increment counters
+		if (this.colorToMove == Game.BLACK) {
+			this.moveNumber++;
+		}
+		if (Game.getPieceType(piece) == Game.PAWN || captureMade) {
+			this.fmrCounter = 0;
+		} else {
+			this.fmrCounter++;
+		}
+		
+		// Switch color to move
+		if (this.colorToMove == Game.WHITE) {
+			this.colorToMove = Game.BLACK;
+		} else if (this.colorToMove == Game.BLACK) {
+			this.colorToMove = Game.WHITE;
+		}
 	}
 	
 	// -------- toString --------
