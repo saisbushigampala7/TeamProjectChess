@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Class representing a game of chess.
  * <p>
- * This class is currently incomplete and being worked on.
+ * This class is currently complete, but untested.
  * <p>
  * Much of the code in this class was inspired by Sebastian Lague's
  * implementation of chess in <a
@@ -52,7 +52,7 @@ public class Game
 	public static final int KING = 6;
 	
 	/**
-	 * Constant representing a white piece.
+	 * Constant representing the white color.
 	 * <p>
 	 * This constant is added to one of the piece constants to represent a
 	 * particular kind of white piece. For example, a white bishop would be
@@ -61,7 +61,7 @@ public class Game
 	public static final int WHITE = 8;
 	
 	/**
-	 * Constant representing a black piece.
+	 * Constant representing the black color.
 	 * <p>
 	 * This constant is added to one of the piece constants to represent a
 	 * particular kind of black piece. For example, a black bishop would be
@@ -70,12 +70,21 @@ public class Game
 	public static final int BLACK = 16;
 	
 	/**
-	 * Bitmask to use when testing a square's color.
+	 * Constant representing a drawn game.
+	 * <p>
+	 * This constant is only used when representing the result of a game; it is
+	 * never used to represent a piece color, even though it fits the bitmask to
+	 * test a piece's color.
+	 */
+	public static final int DRAW = 24;
+	
+	/**
+	 * Bitmask to use when testing a piece's color.
 	 */
 	public static final int COLOR_MASK = 0b11000;
 	
 	/**
-	 * Bitmask to use when testing a square's kind of piece.
+	 * Bitmask to use when testing a piece's kind.
 	 */
 	public static final int PIECE_MASK = 0b00111;
 	
@@ -98,6 +107,12 @@ public class Game
 	
 	// The current move number.
 	private int moveNumber;
+	
+	// The result of the game (which color has won, if any).
+	private int result;
+	
+	// The piece to promote the next promoted pawn to.
+	private int promotionPiece;
 	
 	// -------- Various helper methods --------
 	
@@ -269,6 +284,8 @@ public class Game
 		this.enPassantFile = -1;
 		this.fmrCounter = 0;
 		this.moveNumber = 1;
+		this.result = Game.NONE;
+		this.promotionPiece = Game.QUEEN;
 		this.setFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 	}
 	
@@ -281,7 +298,7 @@ public class Game
 	 */
 	public Game(Game g)
 	{
-		this.board = new int[8][8];
+		this.board = g.getBoard();
 		this.colorToMove = g.colorToMove;
 		this.whiteCanCastleKingside = g.whiteCanCastleKingside;
 		this.whiteCanCastleQueenside = g.whiteCanCastleQueenside;
@@ -291,6 +308,8 @@ public class Game
 		this.enPassantFile = g.enPassantFile;
 		this.fmrCounter = g.fmrCounter;
 		this.moveNumber = g.moveNumber;
+		this.result = g.result;
+		this.promotionPiece = g.promotionPiece;
 	}
 	
 	// -------- FEN operations --------
@@ -362,7 +381,6 @@ public class Game
 		
 		// Component 6: Move number
 		fen.append(this.moveNumber);
-		fen.append(" ");
 		
 		return fen.toString();
 	}
@@ -498,6 +516,77 @@ public class Game
 		} catch (NumberFormatException e) {
 			Game.illegalArg("Invalid move number '" + components[5] + "'");
 		}
+	}
+	
+	// -------- Game state getters --------
+	
+	/**
+	 * Returns a copy of the board array.
+	 * 
+	 * @return A copy of the board array.
+	 */
+	public int[][] getBoard()
+	{
+		int[][] ret = new int[8][8];
+		for (int i = 0; i < 8; i++) {
+			System.arraycopy(this.board[i], 0, ret[i], 0, 8);
+		}
+		return ret;
+	}
+	
+	/**
+	 * Returns true if this game has ended; false otherwise.
+	 * 
+	 * @return True if this game has ended; false otherwise.
+	 */
+	public boolean gameEnded()
+	{
+		return this.result != Game.NONE;
+	}
+	
+	/**
+	 * Returns the result of this game.
+	 * <p>
+	 * The possible return values are as follows:
+	 * <li>{@code Game.NONE}: Game has not yet ended.
+	 * <li>{@code Game.WHITE}: Game has ended in a win for the white player.
+	 * <li>{@code Game.BLACK}: Game has ended in a win for the black player.
+	 * <li>{@code Game.DRAW}: Game has ended in a draw.
+	 * 
+	 * @return The result of this game, as described above.
+	 */
+	public int getResult()
+	{
+		return this.result;
+	}
+	
+	// -------- Game state setters --------
+	
+	/**
+	 * Sets the next promotion piece to the specified piece type.
+	 * 
+	 * @param piece The piece type to promote the next pawn to.
+	 */
+	public void setPromotionPiece(int piece)
+	{
+		this.promotionPiece = piece;
+	}
+	
+	/**
+	 * The player whose turn it is resigns the game, causing the game to end in
+	 * a win for their opponent.
+	 */
+	public void resign()
+	{
+		this.result = this.getOpponentColor();
+	}
+	
+	/**
+	 * Ends the game in a draw.
+	 */
+	public void declareDraw()
+	{
+		this.result = Game.DRAW;
 	}
 	
 	// -------- Checking pseudo-legal destinations --------
@@ -843,7 +932,17 @@ public class Game
 	 */
 	public boolean isInCheck()
 	{
-		// TODO: Complete this
+		Game g = new Game(this);
+		g.colorToMove = this.getOpponentColor();
+		// See if the opponent can capture the king
+		List<String> moves = g.getAllPseudoLegalMoves();
+		for (String m: moves) {
+			int[] dest = Game.moveToIndices(m)[1];
+			if (this.board[dest[0]][dest[1]] ==
+					(this.colorToMove | Game.KING)) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -858,8 +957,66 @@ public class Game
 	 */
 	public List<String> getAllLegalMoves()
 	{
-		List<String> ret = this.getAllPseudoLegalMoves();
-		// TODO: Remove moves that are illegal because of check(mate)
+		List<String> allMoves = this.getAllPseudoLegalMoves();
+		List<String> ret = new ArrayList<String>(allMoves);
+		// Remove moves that are illegal because of check(mate)
+		for (String m: allMoves) {
+			Game g = new Game(this);
+			g.makeMove(m);
+			g.colorToMove = this.colorToMove;
+			if (g.isInCheck()) {
+				ret.remove(m);
+			}
+		}
+		allMoves.clear();
+		allMoves.addAll(ret);
+		Game g = new Game(this);
+		g.colorToMove = this.getOpponentColor();
+		// Remove castling moves made illegal by check(mate)
+		if (this.whiteCanCastleKingside && allMoves.contains("e1g1")) {
+			// See if the opponent can capture on e1 or f1
+			List<String> moves = g.getAllPseudoLegalMoves();
+			for (String m: moves) {
+				int[] dest = Game.moveToIndices(m)[1];
+				if (dest[0] == 0 && (dest[1] == 4 || dest[1] == 5)) {
+					ret.remove("e1g1");
+					break;
+				}
+			}
+		}
+		if (this.whiteCanCastleQueenside && allMoves.contains("e1c1")) {
+			// See if the opponent can capture on e1 or d1
+			List<String> moves = g.getAllPseudoLegalMoves();
+			for (String m: moves) {
+				int[] dest = Game.moveToIndices(m)[1];
+				if (dest[0] == 0 && (dest[1] == 4 || dest[1] == 3)) {
+					ret.remove("e1c1");
+					break;
+				}
+			}
+		}
+		if (this.blackCanCastleKingside && allMoves.contains("e8g8")) {
+			// See if the opponent can capture on e8 or f8
+			List<String> moves = g.getAllPseudoLegalMoves();
+			for (String m: moves) {
+				int[] dest = Game.moveToIndices(m)[1];
+				if (dest[0] == 7 && (dest[1] == 4 || dest[1] == 5)) {
+					ret.remove("e8g8");
+					break;
+				}
+			}
+		}
+		if (this.blackCanCastleQueenside && allMoves.contains("e8c8")) {
+			// See if the opponent can capture on e8 or d8
+			List<String> moves = g.getAllPseudoLegalMoves();
+			for (String m: moves) {
+				int[] dest = Game.moveToIndices(m)[1];
+				if (dest[0] == 7 && (dest[1] == 4 || dest[1] == 3)) {
+					ret.remove("e8c8");
+					break;
+				}
+			}
+		}
 		return ret;
 	}
 	
@@ -971,6 +1128,13 @@ public class Game
 			this.enPassantFile = -1;
 		}
 		
+		// Handle promotion
+		if (Game.getPieceType(piece) == Game.PAWN &&
+				dest[0] == (this.colorToMove == Game.WHITE ? 7 : 0)) {
+			this.board[dest[0]][dest[1]] =
+					this.colorToMove | this.promotionPiece;
+		}
+		
 		// Increment counters
 		if (this.colorToMove == Game.BLACK) {
 			this.moveNumber++;
@@ -986,6 +1150,18 @@ public class Game
 			this.colorToMove = Game.BLACK;
 		} else if (this.colorToMove == Game.BLACK) {
 			this.colorToMove = Game.WHITE;
+		}
+		
+		// If no legal moves, end game
+		List<String> moves = this.getAllLegalMoves();
+		if (moves.isEmpty()) {
+			if (this.isInCheck()) {
+				// Checkmate, end in a loss for next player
+				this.resign();
+			} else {
+				// Stalemate, end in a draw
+				this.declareDraw();
+			}
 		}
 	}
 	
