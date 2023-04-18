@@ -20,6 +20,14 @@ public class BoardPanel extends JPanel{
 		bottom = new JPanel(new FlowLayout());
 		mainPanel.add(bottom, BorderLayout.SOUTH);
 		
+		JPanel left2 = new JPanel();
+		left2.add(drawButton);
+		bottom.add(left2, FlowLayout.LEFT);
+		
+		JPanel right2 = new JPanel();
+		right2.add(resignButton);
+		bottom.add(right2, FlowLayout.RIGHT);
+		
 		
 	}
 	
