@@ -11,9 +11,15 @@ public class BoardPanel extends JPanel{
 	private JButton resignButton;
 	private JButton drawButton;
 	private JButton alertButton;
+	private JPanel mainPanel;
+	private JPanel bottom;
 	
 	public BoardPanel()
 	{
+		mainPanel = new JPanel(new BorderLayout());
+		bottom = new JPanel(new FlowLayout());
+		mainPanel.add(bottom, BorderLayout.SOUTH);
+		
 		
 	}
 	
