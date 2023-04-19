@@ -2,8 +2,9 @@ package ClientGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import game.*;
 
-public class BoardPanel extends JPanel{
+public class BoardPanel extends JFrame{
 
 	private JPanel boardArea;
 	private JLabel alertLabel;
@@ -12,42 +13,42 @@ public class BoardPanel extends JPanel{
 	private JButton drawButton;
 	private JButton alertButton;
 	private JPanel mainPanel;
-	private JPanel bottom;
+	
+
 	
 	public BoardPanel()
 	{
 		mainPanel = new JPanel(new BorderLayout());
-		bottom = new JPanel(new FlowLayout());
+		
+		this.setTitle("Client");
+	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    this.add(mainPanel);
+	    this.setVisible(true);
+	    this.setSize(400, 400);
+	    
+		
+		JPanel bottom = new JPanel(new FlowLayout());
 		mainPanel.add(bottom, BorderLayout.SOUTH);
+		mainPanel.setVisible(true);
+		
+		drawButton = new JButton("Draw");
 		
 		JPanel left2 = new JPanel();
 		left2.add(drawButton);
-		bottom.add(left2, FlowLayout.LEFT);
+		bottom.add(left2);
+		
+		resignButton = new JButton("Resign");
 		
 		JPanel right2 = new JPanel();
 		right2.add(resignButton);
-		bottom.add(right2, FlowLayout.RIGHT);
-		
-		JPanel top = new JPanel(new FlowLayout());
-		mainPanel.add(top, BorderLayout.NORTH);
-		
-		JPanel left1 = new JPanel(new FlowLayout());
-		left1.add(alertLabel, FlowLayout.LEFT);
-		left1.add(alertButton, FlowLayout.RIGHT);
-		top.add(left1, FlowLayout.LEFT);
-		
-		JPanel right1 = new JPanel(new FlowLayout());
-		right1.add(clockLabel, FlowLayout.LEFT);
-		// right1.add(clock, FlowLayout.RIGHT);
-		top.add(right1, FlowLayout.RIGHT);
-		
-		mainPanel.setVisible(true);
-		bottom.setVisible(true);
-		top.setVisible(true);
-		
+		bottom.add(right2);
 		
 		
 	}
 	
+	public static void main(String[] args)
+	{
+		new BoardPanel();
+	}
 	
 }
