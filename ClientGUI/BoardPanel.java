@@ -43,6 +43,24 @@ public class BoardPanel extends JFrame{
 		right2.add(resignButton);
 		bottom.add(right2);
 		
+		JPanel top = new JPanel(new FlowLayout());
+		mainPanel.add(top, BorderLayout.NORTH);
+		
+		JPanel left1 = new JPanel();
+		alertLabel = new JLabel("Alert");
+		alertButton = new JButton("AlertB");
+		
+		left1.add(alertLabel);
+		left1.add(alertButton);
+		top.add(left1);
+		
+		clockLabel = new JLabel("Clock");
+		
+		JPanel right1 = new JPanel();
+		right1.add(clockLabel);
+		top.add(right1);
+		
+		
 		
 	}
 	
