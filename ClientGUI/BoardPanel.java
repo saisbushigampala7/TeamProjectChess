@@ -42,6 +42,8 @@ public class BoardPanel extends JPanel{
 		top.add(right1, FlowLayout.RIGHT);
 		
 		mainPanel.setVisible(true);
+		bottom.setVisible(true);
+		top.setVisible(true);
 		
 		
 		
