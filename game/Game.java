@@ -6,8 +6,6 @@ import java.util.List;
 /**
  * Class representing a game of chess.
  * <p>
- * This class is currently complete, but untested.
- * <p>
  * Much of the code in this class was inspired by Sebastian Lague's
  * implementation of chess in <a
  * href=https://www.youtube.com/watch?v=U4ogK0MIzqk>this video</a>.
@@ -153,8 +151,8 @@ public class Game
 			Game.illegalArg(message);
 		}
 		int[] ret = new int[2];
-		ret[0] = algebraic.charAt(0) - 'a';
-		ret[1] = algebraic.charAt(1) - '0';
+		ret[0] = algebraic.charAt(1) - '1';
+		ret[1] = algebraic.charAt(0) - 'a';
 		if (!Game.isValidSquare(ret[0], ret[1])) {
 			Game.illegalArg(message);
 		}
@@ -175,8 +173,8 @@ public class Game
 			Game.illegalArg("Invalid indices (" + rank + ", " + file + ")");
 		}
 		StringBuilder ret = new StringBuilder();
-		ret.append((char)(rank + 'a'));
-		ret.append(file);
+		ret.append((char)(file + 'a'));
+		ret.append(rank + 1);
 		return ret.toString();
 	}
 	
@@ -211,6 +209,9 @@ public class Game
 	 */
 	private static char pieceIntToChar(int piece)
 	{
+		if (piece == Game.NONE) {
+			return ' ';
+		}
 		char pieceChar = 'P';
 		String message = "Invalid piece number " + piece;
 		switch (Game.getPieceType(piece)) {
@@ -338,7 +339,9 @@ public class Game
 					fen.append(Game.pieceIntToChar(piece));
 				}
 			}
-			fen.append(blankSquares);
+			if (blankSquares > 0) {
+				fen.append(blankSquares);
+			}
 			if (r > 0) {
 				fen.append("/");
 			}
@@ -647,6 +650,23 @@ public class Game
 	}
 	
 	/**
+	 * Returns {@code true} if the square at the passed-in rank and file can be
+	 * moved to; returns {@code false} otherwise.
+	 * <p>
+	 * A square can be moved to if it is on the board and does not contain a
+	 * piece of the active player's color.
+	 * 
+	 * @param rank The rank index of the square to test.
+	 * @param file The file index of the square to test.
+	 * @return A boolean as described above.
+	 */
+	private boolean canMoveTo(int rank, int file)
+	{
+		return Game.isValidSquare(rank, file) &&
+				!this.isActiveColor(rank, file);
+	}
+	
+	/**
 	 * Returns a list containing all pseudo-legal destination squares, in
 	 * algebraic notation, for the piece on the passed-in rank and file.
 	 * 
@@ -781,7 +801,7 @@ public class Game
 		for (int i = 0; i < 8; i++) {
 			int newRank = rank + rankOffsets[i];
 			int newFile = file + fileOffsets[i];
-			if (!this.isActiveColor(newRank, newFile)) {
+			if (this.canMoveTo(newRank, newFile)) {
 				ret.add(Game.indicesToAlgebraic(newRank, newFile));
 			}
 		}
@@ -870,7 +890,7 @@ public class Game
 		for (int i = 0; i < 8; i++) {
 			int newRank = rank + rankOffsets[i];
 			int newFile = file + fileOffsets[i];
-			if (!this.isActiveColor(newRank, newFile)) {
+			if (this.canMoveTo(newRank, newFile)) {
 				ret.add(Game.indicesToAlgebraic(newRank, newFile));
 			}
 		}
@@ -962,7 +982,7 @@ public class Game
 		// Remove moves that are illegal because of check(mate)
 		for (String m: allMoves) {
 			Game g = new Game(this);
-			g.makeMove(m);
+			g.makeMoveNoGameEnd(m);
 			g.colorToMove = this.colorToMove;
 			if (g.isInCheck()) {
 				ret.remove(m);
@@ -1029,6 +1049,33 @@ public class Game
 	 * @param move The move to make.
 	 */
 	public void makeMove(String move)
+	{
+		// Make the move
+		this.makeMoveNoGameEnd(move);
+		
+		// If no legal moves, end game
+		List<String> moves = this.getAllLegalMoves();
+		if (moves.isEmpty()) {
+			if (this.isInCheck()) {
+				// Checkmate, end in a loss for next player
+				this.resign();
+			} else {
+				// Stalemate, end in a draw
+				this.declareDraw();
+			}
+		}
+	}
+	
+	/**
+	 * Makes the passed-in move, in the form of the starting square followed by
+	 * the destination square, both in algebraic notation.
+	 * <p>
+	 * This method does not check for game end after making the move and is used
+	 * to assist in checking legal moves without creating infinite recursion.
+	 * 
+	 * @param move The move to make.
+	 */
+	private void makeMoveNoGameEnd(String move)
 	{
 		// Change position of piece
 		int[][] indices = Game.moveToIndices(move);
@@ -1143,6 +1190,10 @@ public class Game
 			this.fmrCounter = 0;
 		} else {
 			this.fmrCounter++;
+			if (this.fmrCounter >= 100) {
+				// Draw by 50-move rule
+				this.declareDraw();
+			}
 		}
 		
 		// Switch color to move
@@ -1150,18 +1201,6 @@ public class Game
 			this.colorToMove = Game.BLACK;
 		} else if (this.colorToMove == Game.BLACK) {
 			this.colorToMove = Game.WHITE;
-		}
-		
-		// If no legal moves, end game
-		List<String> moves = this.getAllLegalMoves();
-		if (moves.isEmpty()) {
-			if (this.isInCheck()) {
-				// Checkmate, end in a loss for next player
-				this.resign();
-			} else {
-				// Stalemate, end in a draw
-				this.declareDraw();
-			}
 		}
 	}
 	
@@ -1176,7 +1215,7 @@ public class Game
 	{
 		StringBuilder ret = new StringBuilder();
 		String rowSeparator = "+-+-+-+-+-+-+-+-+\n";
-		for (int i = 0; i < 8; i++) {
+		for (int i = 7; i >= 0; i--) {
 			ret.append(rowSeparator);
 			for (int j = 0; j < 8; j++) {
 				ret.append('|');
