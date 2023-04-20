@@ -21,7 +21,7 @@ public class BoardPanel extends JFrame{
 	private JPanel mainPanel;
 	private JPanel board;
 	private JLabel turn;
-
+	private JLabel pawn;
 
 
 
@@ -90,9 +90,9 @@ public class BoardPanel extends JFrame{
 			
 			int row = (i / 8) % 2;
 			if (row == 0)
-				positions.setBackground( i % 2 == 0 ? Color.black : Color.white );
+				positions.setBackground( i % 2 == 0 ? Color.black : Color.gray );
 			else
-				positions.setBackground( i % 2 == 0 ? Color.white : Color.black );
+				positions.setBackground( i % 2 == 0 ? Color.gray : Color.black );
 			
 		}
 		board.setVisible(true);
@@ -102,6 +102,12 @@ public class BoardPanel extends JFrame{
 		mainPanel.setBackground(Color.GRAY);
 		top.setBackground(Color.DARK_GRAY);
 		bottom.setBackground(Color.DARK_GRAY);
+		
+		// Piece code
+		ImageIcon icon = new ImageIcon("./pawn.jpg");
+		pawn = new JLabel(icon);
+		JPanel panel = (JPanel)board.getComponent(0);
+		panel.add(pawn);
 		
 		
 		
