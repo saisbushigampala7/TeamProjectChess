@@ -4,8 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import game.*;
 
+
 /*
- *  Part of the code 
+ *  Part of the code came is inspired from the following:
+ *  https://www.roseindia.net/java/example/java/swing/chess-application-swing.shtml
  */
 
 public class BoardPanel extends JFrame{
@@ -86,22 +88,12 @@ public class BoardPanel extends JFrame{
 			board.add(positions);
 			positions.setVisible(true);
 			
-			/*
 			int row = (i / 8) % 2;
 			if (row == 0)
 				positions.setBackground( i % 2 == 0 ? Color.black : Color.white );
 			else
 				positions.setBackground( i % 2 == 0 ? Color.white : Color.black );
-			*/
-			if (!(i % 2 == 0))
-			{
-				positions.setBackground(Color.white);
-			}
-			else
-			{
-				positions.setBackground(Color.black);
-			}
-		
+			
 		}
 		board.setVisible(true);
 		boardArea.add(board, BorderLayout.CENTER);
