@@ -13,6 +13,9 @@ public class BoardPanel extends JFrame{
 	private JButton drawButton;
 	private JButton alertButton;
 	private JPanel mainPanel;
+	private JPanel board;
+	private JLabel turn;
+	
 	
 
 	
@@ -46,9 +49,8 @@ public class BoardPanel extends JFrame{
 		JPanel top = new JPanel(new FlowLayout());
 		mainPanel.add(top, BorderLayout.NORTH);
 		
-		JPanel left1 = new JPanel();
+		JPanel left1 = new JPanel(new GridLayout(1, 1, 2, 2));
 		alertLabel = new JLabel("Alert");
-		
 		alertButton = new JButton("AlertB");
 		
 		left1.add(alertLabel);
@@ -58,9 +60,18 @@ public class BoardPanel extends JFrame{
 		
 		clockLabel = new JLabel("Clock");
 		
-		JPanel right1 = new JPanel();
+		JPanel right1 = new JPanel(new GridLayout(1, 1, 2, 2));
 		right1.add(clockLabel);
 		top.add(right1);
+		
+		// Actual Board code
+		boardArea = new JPanel(new BorderLayout());
+		mainPanel.add(boardArea, BorderLayout.CENTER);
+		turn = new JLabel(" Turn");
+		turn.setVisible(true);
+		boardArea.add(turn, BorderLayout.NORTH);
+		
+		board = new JPanel(new GridLayout());
 		
 		
 		
