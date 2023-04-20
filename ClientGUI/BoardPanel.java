@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import game.*;
 
+/*
+ *  Part of the code 
+ */
+
 public class BoardPanel extends JFrame{
 
 	private JPanel boardArea;
@@ -22,14 +26,15 @@ public class BoardPanel extends JFrame{
 	public BoardPanel()
 	{
 		mainPanel = new JPanel(new BorderLayout());
-
+		
+		// set Window
 		this.setTitle("Client");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.add(mainPanel);
 		this.setVisible(true);
-		this.setSize(400, 400);
+		this.setSize(500, 500);
 
-
+		// bottom panel for resign and draw buttons
 		JPanel bottom = new JPanel(new FlowLayout());
 		mainPanel.add(bottom, BorderLayout.SOUTH);
 		mainPanel.setVisible(true);
@@ -45,7 +50,8 @@ public class BoardPanel extends JFrame{
 		JPanel right2 = new JPanel();
 		right2.add(resignButton);
 		bottom.add(right2);
-
+		
+		// top panel for alerts and clock stuff
 		JPanel top = new JPanel(new FlowLayout());
 		mainPanel.add(top, BorderLayout.NORTH);
 
@@ -71,7 +77,7 @@ public class BoardPanel extends JFrame{
 		turn.setVisible(true);
 		boardArea.add(turn, BorderLayout.NORTH);
 		
-
+		// Chess Board code
 		board = new JPanel(new GridLayout(8, 8));
 		board.setBackground(Color.DARK_GRAY);
 		for (int i = 0; i < 64; i++) 
@@ -79,18 +85,32 @@ public class BoardPanel extends JFrame{
 			JPanel positions = new JPanel();
 			board.add(positions);
 			positions.setVisible(true);
-
+			
+			/*
 			int row = (i / 8) % 2;
 			if (row == 0)
 				positions.setBackground( i % 2 == 0 ? Color.black : Color.white );
 			else
 				positions.setBackground( i % 2 == 0 ? Color.white : Color.black );
+			*/
+			if (!(i % 2 == 0))
+			{
+				positions.setBackground(Color.white);
+			}
+			else
+			{
+				positions.setBackground(Color.black);
+			}
+		
 		}
 		board.setVisible(true);
 		boardArea.add(board, BorderLayout.CENTER);
+		
+		// Color code
 		mainPanel.setBackground(Color.GRAY);
 		top.setBackground(Color.DARK_GRAY);
 		bottom.setBackground(Color.DARK_GRAY);
+		
 		
 		
 	}
