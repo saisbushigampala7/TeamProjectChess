@@ -70,22 +70,28 @@ public class BoardPanel extends JFrame{
 		turn = new JLabel(" Turn");
 		turn.setVisible(true);
 		boardArea.add(turn, BorderLayout.NORTH);
+		
 
 		board = new JPanel(new GridLayout(8, 8));
-		for (int i = 0; i < 64; i++) {
-			JPanel square = new JPanel();
-			board.add(square);
-			square.setVisible(true);
+		board.setBackground(Color.DARK_GRAY);
+		for (int i = 0; i < 64; i++) 
+		{
+			JPanel positions = new JPanel();
+			board.add(positions);
+			positions.setVisible(true);
 
 			int row = (i / 8) % 2;
 			if (row == 0)
-				square.setBackground( i % 2 == 0 ? Color.black : Color.white );
+				positions.setBackground( i % 2 == 0 ? Color.black : Color.white );
 			else
-				square.setBackground( i % 2 == 0 ? Color.white : Color.black );
+				positions.setBackground( i % 2 == 0 ? Color.white : Color.black );
 		}
 		board.setVisible(true);
 		boardArea.add(board, BorderLayout.CENTER);
 		mainPanel.setBackground(Color.GRAY);
+		top.setBackground(Color.DARK_GRAY);
+		bottom.setBackground(Color.DARK_GRAY);
+		
 		
 	}
 
