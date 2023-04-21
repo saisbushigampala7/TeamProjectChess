@@ -105,13 +105,30 @@ public class BoardPanel extends JFrame{
 		bottom.setBackground(Color.DARK_GRAY);
 		
 		// Piece code
-		ImageIcon icon = new ImageIcon(getClass().getResource("/pawn.png"));
-		icon.setImage(icon.getImage().getScaledInstance(40, 45, Image.SCALE_DEFAULT));
-		JLabel piece = new JLabel(icon);
-		JPanel panel =(JPanel)board.getComponent(8);
-		panel.add(piece);
-		panel.setVisible(true);
-		panel.validate();
+		
+		// Added white Pawns
+		for (int j = 8; j < 16; j++)
+		{
+			ImageIcon icon = new ImageIcon(getClass().getResource("/pawn.png"));
+			icon.setImage(icon.getImage().getScaledInstance(40, 45, Image.SCALE_DEFAULT));
+			JLabel piece = new JLabel(icon);
+			JPanel panel =(JPanel)board.getComponent(j);
+			panel.add(piece);
+			panel.setVisible(true);
+			panel.validate();
+		}
+		
+		// Added Black Pawns
+		for (int j = 48; j <= 55; j++)
+		{
+			ImageIcon icon = new ImageIcon(getClass().getResource("/bpawn.png"));
+			icon.setImage(icon.getImage().getScaledInstance(40, 45, Image.SCALE_DEFAULT));
+			JLabel piece = new JLabel(icon);
+			JPanel panel =(JPanel)board.getComponent(j);
+			panel.add(piece);
+			panel.setVisible(true);
+			panel.validate();
+		}
 		
 		
 		
