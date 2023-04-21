@@ -22,7 +22,7 @@ public class BoardPanel extends JFrame{
 	private JPanel board;
 	private JLabel turn;
 	private JLabel pawn;
-	
+
 
 
 	public BoardPanel()
@@ -34,7 +34,7 @@ public class BoardPanel extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.add(mainPanel);
 		this.setVisible(true);
-		this.setSize(600, 600);
+		this.setSize(500, 500);
 
 		// bottom panel for resign and draw buttons
 		JPanel bottom = new JPanel(new FlowLayout());
@@ -82,8 +82,6 @@ public class BoardPanel extends JFrame{
 		// Chess Board code
 		board = new JPanel(new GridLayout(8, 8));
 		board.setBackground(Color.DARK_GRAY);
-		
-		
 		for (int i = 0; i < 64; i++) 
 		{
 			JPanel positions = new JPanel();
@@ -106,12 +104,10 @@ public class BoardPanel extends JFrame{
 		bottom.setBackground(Color.DARK_GRAY);
 		
 		// Piece code
-		//ImageIcon icon = new ImageIcon(getClass().getResource("/pawn.png"));
-		JLabel piece = new JLabel(new ImageIcon(getClass().getResource("/pawn.png")));
-		JPanel panel =(JPanel)board.getComponent(8);
-		panel.add(piece);
-		panel.setVisible(true);
-		panel.validate();
+		ImageIcon icon = new ImageIcon("./pawn.jpg");
+		pawn = new JLabel(icon);
+		JPanel panel = (JPanel)board.getComponent(0);
+		panel.add(pawn);
 		
 		
 		

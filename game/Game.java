@@ -1,5 +1,6 @@
 package game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * 
  * @author Archer Murray
  */
-public class Game
+public class Game implements Serializable
 {
 	/**
 	 * Constant representing a blank square.
