@@ -21,7 +21,10 @@ public class BoardPanel extends JFrame{
 	private JPanel mainPanel;
 	private JPanel board;
 	private JLabel turn;
-	private JLabel pawn;
+	private ImageIcon icon;
+	private JPanel panel;
+	private JLabel piece;
+	
 
 
 	public BoardPanel()
@@ -33,7 +36,7 @@ public class BoardPanel extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.add(mainPanel);
 		this.setVisible(true);
-		this.setSize(550, 550);
+		this.setSize(550, 600);
 
 		// bottom panel for resign and draw buttons
 		JPanel bottom = new JPanel(new FlowLayout());
@@ -99,36 +102,86 @@ public class BoardPanel extends JFrame{
 		board.setVisible(true);
 		boardArea.add(board, BorderLayout.CENTER);
 		
-		// Color code
+		// Board Color code
 		mainPanel.setBackground(Color.GRAY);
 		top.setBackground(Color.DARK_GRAY);
 		bottom.setBackground(Color.DARK_GRAY);
 		
-		// Piece code
+		// Adding Pieces code
+		String[] pics = new String [] {"/pawn.png", "/bpawn.png", "/wrook.png", "/brook.png", "/wknight.png", 
+				"/bknight.png", "/bbishop.png", "/wbishop.png", "/bqueen.png", "/wqueen.png", "/bking.png", "/wking.png"};
 		
-		// Added white Pawns
-		for (int j = 8; j < 16; j++)
+		int index = 0;
+		for (int j = 0; j < 64; j++)
 		{
-			ImageIcon icon = new ImageIcon(getClass().getResource("/pawn.png"));
-			icon.setImage(icon.getImage().getScaledInstance(40, 45, Image.SCALE_DEFAULT));
-			JLabel piece = new JLabel(icon);
-			JPanel panel =(JPanel)board.getComponent(j);
+			if (j == 0 || j == 7)
+			{
+				index = 2;
+			}
+			else if (j == 1 || j == 6)
+			{
+				index = 4;
+			}
+			else if (j == 1 || j == 6)
+			{
+				index = 4;
+			}
+			else if (j == 2 || j == 5)
+			{
+				index = 7;
+			}
+			else if (j == 3)
+			{
+				index = 11;
+			}
+			else if (j == 4)
+			{
+				index = 9;
+			}
+			else if (j >= 8 && j <= 15)
+			{
+				index = 0;
+			}
+			else if (j >= 48 && j <= 55)
+			{
+				index = 1;
+			}
+			else if (j == 56 || j == 63)
+			{
+				index = 3;
+			}
+			else if (j == 57 || j == 62)
+			{
+				index = 5;
+			}
+			else if(j == 58 || j == 61)
+			{
+				index = 6;
+			}
+			else if (j == 59)
+			{
+				index = 10;
+			}
+			else if (j == 60)
+			{
+				index = 8;
+			}
+			else
+			{
+				continue;
+			}
+				
+			icon = new ImageIcon(getClass().getResource(pics[index]));
+			icon.setImage(icon.getImage().getScaledInstance(40, 50, Image.SCALE_DEFAULT));
+			piece = new JLabel(icon);
+			panel =(JPanel)board.getComponent(j);
 			panel.add(piece);
 			panel.setVisible(true);
 			panel.validate();
 		}
 		
-		// Added Black Pawns
-		for (int j = 48; j <= 55; j++)
-		{
-			ImageIcon icon = new ImageIcon(getClass().getResource("/bpawn.png"));
-			icon.setImage(icon.getImage().getScaledInstance(40, 45, Image.SCALE_DEFAULT));
-			JLabel piece = new JLabel(icon);
-			JPanel panel =(JPanel)board.getComponent(j);
-			panel.add(piece);
-			panel.setVisible(true);
-			panel.validate();
-		}
+		// Piece Movable code
+		
 		
 		
 		
