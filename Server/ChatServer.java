@@ -8,6 +8,8 @@ import game.Game;
 import ClientGUI.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
@@ -22,27 +24,23 @@ public class ChatServer extends AbstractServer
   private ConnectionToClient player2;
   private Game chess;
   private ConnectionToClient currentPlayer;
+  private Database database;
   
   
   // Constructor for initializing the server with default settings.
-  public ChatServer()
+  public ChatServer() throws IOException
   {
     super(12345);
     this.setTimeout(500);
-    //DATABASE STUFF, I'll uncomment once implemented
-    //try {
-	//	database = new Database();
-	//} catch (IOException e) {
-	//	e.printStackTrace();
-	//}
+    database = new Database();
   }
   
   //DATABASE STUFF, I'll uncomment once implemented
-  //void setDatabase(Database database)
-  //{
-  //	this.database = database;
+  void setDatabase(Database database)
+  {
+  	this.database = database;
 	  
-  //}
+  }
 
   // Getter that returns whether the server is currently running.
   public boolean isRunning()
@@ -100,10 +98,9 @@ public class ChatServer extends AbstractServer
     {
       // Check the username and password with the database.
       LoginData data = (LoginData)arg0;
-      Object result;
+      Object result = null;
       //DATABASE STUFF, I'll uncomment once implemented
-      //if (database.verifyAccount(data.getUsername(), data.getPassword()))
-      if(true)
+      if (database.verifyAccount(data.getUsername(), data.getPassword()))
       {
         result = "LoginSuccessful";
         log.append("Client " + arg1.getId() + " successfully logged in as " + data.getUsername() + "\n");
@@ -199,19 +196,23 @@ public class ChatServer extends AbstractServer
     {
       // Try to create the account.
       CreateAccountData data = (CreateAccountData)arg0;
-      Object result;
+      Object result = null;
       //DATABASE STUFF, I'll uncomment once implemented
-      //if (database.createNewAccount(data.getUsername(), data.getPassword()))
-      if(true)
-      {
-        result = "CreateAccountSuccessful";
-        log.append("Client " + arg1.getId() + " created a new account called " + data.getUsername() + "\n");
-      }
-      else
-      {
-        result = new Error("The username is already in use.", "CreateAccount");
-        log.append("Client " + arg1.getId() + " failed to create a new account\n");
-      }
+      try {
+		if (database.createNewAccount(data.getUsername(), data.getPassword()))
+		  {
+		    result = "CreateAccountSuccessful";
+		    log.append("Client " + arg1.getId() + " created a new account called " + data.getUsername() + "\n");
+		  }
+		  else
+		  {
+		    result = new Error("The username is already in use.", "CreateAccount");
+		    log.append("Client " + arg1.getId() + " failed to create a new account\n");
+		  }
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
       
       // Send the result to the client.
       try

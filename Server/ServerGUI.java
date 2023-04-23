@@ -19,7 +19,7 @@ public class ServerGUI extends JFrame
   private ChatServer server;
 
   // Constructor for the server GUI.
-	public ServerGUI()
+	public ServerGUI() throws IOException
 	{	
 	  // Create the main variables that will be used.
     JPanel north = new JPanel();
@@ -106,9 +106,11 @@ public class ServerGUI extends JFrame
 	}
 	
 	// Main function that creates a server GUI when the program is started.
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException
 	{
-		new ServerGUI();
+		ServerGUI serverGUI = new ServerGUI();
+		Database database = new Database();
+		serverGUI.server.setDatabase(database);
 	}
 	
 	// Getters for the important components.
