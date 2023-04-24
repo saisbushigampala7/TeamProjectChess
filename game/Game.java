@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class Game implements Serializable
 {
+	private static final long serialVersionUID = -6936885545565618492L;
+
 	/**
 	 * Constant representing a blank square.
 	 */
