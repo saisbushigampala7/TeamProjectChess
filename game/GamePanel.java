@@ -3,7 +3,6 @@ package game;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.List;
@@ -14,14 +13,14 @@ import java.util.List;
  * 
  * @author Archer Murray
  */
-public class GamePanel extends JFrame
+public class GamePanel extends JPanel
 {
 	private static final long serialVersionUID = -1478100234224270432L;
-
+	
 	// Game-related fields
 	private Game game;
 	private List<String> legalMoves;
-
+	
 	// Panel-related fields
 	private JPanel board;
 	private JTextField moveField;
@@ -31,20 +30,19 @@ public class GamePanel extends JFrame
 	private JLabel horizontal;
 	private JLabel vertical;
 	private JLabel vertical2;
-	private JLabel drawLabel;
-
+	
 	// Images
 	private BufferedImage[] images;
-
+	
 	private class BoardPanel extends JPanel
 	{
 		private static final long serialVersionUID = -5253230713362265205L;
-
+		
 		@Override
 		public void paintComponent(Graphics page)
 		{
 			super.paintComponent(page);
-
+			
 			int[][] board = game.getBoard();
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
@@ -61,58 +59,18 @@ public class GamePanel extends JFrame
 					page.drawImage(images[board[i][j]], x, y, 60, 60, null);
 				}
 			}
-
 		}
 	}
-
-	private class EventHandler implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			String command = e.getActionCommand();
-			if (command == "Submit")
-			{
-				String move = moveField.getText();
-				if (legalMoves.contains(move)) {
-					game.makeMove(move);
-					legalMoves = game.getAllLegalMoves();
-					moveField.setText("");
-					board.repaint();
-					endGameDialog();
-				} else {
-					JOptionPane.showMessageDialog(null, "Illegal move.",
-							"Illegal Move", JOptionPane.INFORMATION_MESSAGE);
-				}
-
-			}
-			else if (command == "Draw" )
-			{
-				drawLabel.setVisible(true);
-				moveField.setEditable(false);
-			}
-			else if (command == "Resign")
-			{
-				// Directs back to BufferPanel
-			}
-
-		}
-	}
-
+	
 	/**
 	 * Creates a new GamePanel.
 	 */
-	public GamePanel()
+	public GamePanel(GameControl gc)
 	{
-		this.getContentPane().setBackground(Color.GRAY);
 		// Set up window
-		this.getContentPane().setLayout(null);
-		this.setTitle("Game");
-
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setBackground(Color.GRAY);
+		this.setLayout(null);
 		
-
-
 		// Load images
 		// Code from: http://compsci.ca/v3/viewtopic.php?t=28197
 		images = new BufferedImage[Game.COLOR_MASK];
@@ -144,13 +102,12 @@ public class GamePanel extends JFrame
 		} catch (IOException e) {
 			System.out.println("Error loading image: " + e);
 		}
-
+		
 		// Create board
 		board = new BoardPanel();
 		board.setBounds(35, 0, 480, 480);
 		this.add(board);
-
-
+		
 		// Create move entry text field and button
 		JLabel moveLabel = new JLabel("Enter move:", JLabel.RIGHT);
 		moveLabel.setBounds(50, 520, 150, 25);
@@ -159,23 +116,19 @@ public class GamePanel extends JFrame
 		moveField.setBounds(200, 520, 150, 25);
 		this.add(moveField);
 		enterMove = new JButton("Submit");
-		enterMove.addActionListener(new EventHandler());
+		enterMove.addActionListener(gc);
 		enterMove.setBounds(350, 520, 150, 25);
 		this.add(enterMove);
 		
-		drawLabel = new JLabel("IT'S A DRAW!");
-		drawLabel.setBounds(200, 540, 150, 25);
-		drawLabel.setVisible(false);
-		this.add(drawLabel);
-
 		draw = new JButton("Draw");
-		draw.setBounds(21, 540, 85, 21);
+		draw.setBounds(125, 545, 150, 25);
 		this.add(draw);
-		draw.addActionListener(new EventHandler());
-
+		draw.addActionListener(gc);
+		
 		resign = new JButton("Resign");
-		resign.setBounds(21, 550, 85, 21);
+		resign.setBounds(275, 545, 150, 25);
 		this.add(resign);
+		resign.addActionListener(gc);
 		
 		horizontal = new JLabel("A - H");
 		horizontal.setBounds(223, 493, 85, 25);
@@ -188,17 +141,15 @@ public class GamePanel extends JFrame
 		vertical2 = new JLabel("1");
 		vertical2.setBounds(548, 428, 45, 33);
 		this.add(vertical2);
-		resign.addActionListener(new EventHandler());
-
+		
 		// Make window visible
 		this.setSize(590, 620);
 		this.setVisible(true);
-
-
+		
 		// Set up game
 		this.setGame(new Game());
 	}
-
+	
 	/**
 	 * Sets the game this GamePanel is based on to the passed-in game.
 	 * 
@@ -207,43 +158,61 @@ public class GamePanel extends JFrame
 	public void setGame(Game game)
 	{
 		this.game = game;
+		this.refreshPanel();
+	}
+	
+	/**
+	 * Returns the game this GamePanel is based on.
+	 * 
+	 * @return The game this GamePanel is based on.
+	 */
+	public Game getGame()
+	{
+		return this.game;
+	}
+	
+	/**
+	 * Makes the move currently typed into the move text field, or displays a
+	 * dialog if the move is illegal.
+	 */
+	public boolean makeMove()
+	{
+		String move = moveField.getText();
+		if (legalMoves.contains(move)) {
+			game.makeMove(move);
+			this.refreshPanel();
+			return true;
+		}
+		JOptionPane.showMessageDialog(null, "Illegal move.", "Illegal Move",
+				JOptionPane.INFORMATION_MESSAGE);
+		return false;
+	}
+	
+	/**
+	 * Refreshes this GamePanel with the current game state.
+	 */
+	private void refreshPanel()
+	{
 		this.legalMoves = game.getAllLegalMoves();
 		this.board.repaint();
-		this.endGameDialog();
-	}
-
-	/**
-	 * Displays a dialog containing the game result, if the game has ended.
-	 */
-	public void endGameDialog()
-	{
-		if (!this.game.gameEnded()) {
-			return;
+		
+		// If the game has ended, display the result dialog
+		if (this.game.gameEnded()) {
+			int result = this.game.getResult();
+			String message = "";
+			switch (result) {
+			case Game.WHITE:
+				message = "White has won the game!";
+				break;
+			case Game.BLACK:
+				message = "Black has won the game!";
+				break;
+			case Game.DRAW:
+				message = "The game has ended in a draw!";
+				break;
+			}
+			JOptionPane.showMessageDialog(null, message, "Game Result",
+					JOptionPane.INFORMATION_MESSAGE);
 		}
-		int result = this.game.getResult();
-		String message = "";
-		switch (result) {
-		case Game.WHITE:
-			message = "White has won the game!";
-			break;
-		case Game.BLACK:
-			message = "Black has won the game!";
-			break;
-		case Game.DRAW:
-			message = "The game has ended in a draw!";
-			break;
-		}
-		JOptionPane.showMessageDialog(null, message, "Game Result",
-				JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	/**
-	 * Displays a GamePanel for testing purposes.
-	 * 
-	 * @param args The command-line arguments.
-	 */
-	public static void main(String[] args)
-	{
-		new GamePanel();
 	}
 }
