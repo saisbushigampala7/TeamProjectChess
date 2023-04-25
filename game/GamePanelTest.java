@@ -7,11 +7,14 @@ import java.awt.CardLayout;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.junit.Before;
 
+import ClientGUI.BufferControl;
+import ClientGUI.BufferPanel;
 import ClientGUI.ChatClient;
 import ClientGUI.CreateAccountControl;
 import ClientGUI.CreateAccountPanel;
@@ -22,8 +25,8 @@ import ClientGUI.LoginPanel;
 
 import org.junit.*;
 
-public class GamePanelTest
-{
+public class GamePanelTest {
+
 	private GameControl gc;
 	private GamePanel gp;
 	
@@ -39,6 +42,7 @@ public class GamePanelTest
 		InitialControl ic = new InitialControl(container, client);
 		LoginControl lc = new LoginControl(container, client);
 		CreateAccountControl cac = new CreateAccountControl(container, client);
+		BufferControl bc = new BufferControl(container, client);
 		GameControl gc = new GameControl(container, client);
 		
 		// Set the client info
@@ -51,6 +55,7 @@ public class GamePanelTest
 		JPanel view1 = new InitialPanel(ic);
 		JPanel view2 = new LoginPanel(lc);
 		JPanel view3 = new CreateAccountPanel(cac);
+		JPanel view4 = new BufferPanel(bc);
 		JPanel view5 = new GamePanel(gc);
 		
 		// Add the views to the card layout container.
@@ -77,25 +82,32 @@ public class GamePanelTest
 	}
 	
 	@Test
-	public void testDraw()
-	{
+	public void testDraw() {
+		
 		gp.getDrawButton().doClick();
 		
 		Robot bot;
-		try {
-			bot = new Robot();
-			// Keys can be pressed
-			bot.keyPress(KeyEvent.VK_ENTER);
-			Thread.sleep(500);
-			bot.keyRelease(KeyEvent.VK_ENTER);
-		} catch (AWTException e1) {
-			e1.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		try
+		{
+		  bot = new Robot();    
+		  //Keys can be pressed
+		  bot.keyPress(KeyEvent.VK_ENTER);
+		  Thread.sleep(500);
+		  bot.keyRelease(KeyEvent.VK_ENTER);
 		
-		assertEquals("check Gamepanel GUI", Game.DRAW,
-				gp.getGame().getResult());
+		 } 
+		 catch (AWTException e1)
+		 {
+		   e1.printStackTrace();
+		 } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		assertEquals("check Gamepanel GUI" , Game.DRAW,gp.getGame().getResult());
+		
+		
+		
 	}
 	
 	@Test
@@ -103,25 +115,31 @@ public class GamePanelTest
 	{
 		gp.getResignButton().doClick();
 		
-		try {
-			Robot bot = new Robot();
-			// Keys can be pressed
-			bot.keyPress(KeyEvent.VK_ENTER);
-			Thread.sleep(500);
-			bot.keyRelease(KeyEvent.VK_ENTER);
-		} catch (AWTException e1) {
-			e1.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		try
+		{
+		  Robot bot = new Robot();    
+		  //Keys can be pressed
+		  bot.keyPress(KeyEvent.VK_ENTER);
+		  Thread.sleep(500);
+		  bot.keyRelease(KeyEvent.VK_ENTER);
 		
-		assertEquals("check Gamepanel GUI", Game.BLACK,
-				gp.getGame().getResult());
+		 } 
+		 catch (AWTException e1)
+		 {
+		   e1.printStackTrace();
+		 } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
+		assertEquals("check Gamepanel GUI" , Game.BLACK,gp.getGame().getResult());
 	}
+	
 	
 	@Test
 	public void testMove()
 	{
+		
 		Game testGame = new Game();
 		gc.getClient().setIsTurn(true);
 		testGame.makeMove("a2a3");
@@ -129,10 +147,11 @@ public class GamePanelTest
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		gp.getSubmitButton().doClick();
-		assertArrayEquals("check Gamepanel GUI", testGame.getBoard(),
-				gp.getGame().getBoard());
+		assertEquals("check Gamepanel GUI" , testGame.getBoard(), gp.getGame().getBoard());
 	}
+
 }
