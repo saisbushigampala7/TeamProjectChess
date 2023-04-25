@@ -108,7 +108,7 @@ public class BoardPanel extends JFrame{
 		bottom.setBackground(Color.DARK_GRAY);
 		
 		// Adding Pieces code
-		String[] pics = new String [] {"/pawn.png", "/bpawn.png", "/wrook.png", "/brook.png", "/wknight.png", 
+		String[] pics = new String [] {"/wpawn.png", "/bpawn.png", "/wrook.png", "/brook.png", "/wknight.png", 
 				"/bknight.png", "/bbishop.png", "/wbishop.png", "/bqueen.png", "/wqueen.png", "/bking.png", "/wking.png"};
 		
 		int index = 0;

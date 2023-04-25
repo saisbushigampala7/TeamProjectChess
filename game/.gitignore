@@ -1,3 +1,6 @@
 /Game.class
 /GameRunner.class
 /GameTest.class
+/GamePanel.class
+/GamePanel$EventHandler.class
+/GamePanel$BoardPanel.class
