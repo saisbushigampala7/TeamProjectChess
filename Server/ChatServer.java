@@ -26,6 +26,7 @@ public class ChatServer extends AbstractServer
 	private Game chess;
 	private ConnectionToClient currentPlayer;
 	private Database database;
+	private boolean truly = true;
 	
 	// Constructor for initializing the server with default settings.
 	public ChatServer() throws IOException
@@ -103,7 +104,7 @@ public class ChatServer extends AbstractServer
 			Object result = null;
 			// DATABASE STUFF, I'll uncomment once implemented
 			if (database.verifyAccount(data.getUsername(), data.getPassword())) {	// <-- comment this out for testing without database
-			//if (true) {	// <-- for testing without database, simply uncomment this and comment above line
+			//if (truly) {	// <-- for testing without database, simply uncomment this and comment above line
 				result = "LoginSuccessful";
 				log.append("Client " + arg1.getId() +
 						" successfully logged in as " + data.getUsername() +

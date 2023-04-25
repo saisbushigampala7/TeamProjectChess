@@ -34,6 +34,8 @@ public class GamePanel extends JPanel
 	// Images
 	private BufferedImage[] images;
 	
+	
+	
 	private class BoardPanel extends JPanel
 	{
 		private static final long serialVersionUID = -5253230713362265205L;
@@ -103,6 +105,8 @@ public class GamePanel extends JPanel
 			System.out.println("Error loading image: " + e);
 		}
 		
+		
+		
 		// Create board
 		board = new BoardPanel();
 		board.setBounds(35, 0, 480, 480);
@@ -148,8 +152,25 @@ public class GamePanel extends JPanel
 		
 		// Set up game
 		this.setGame(new Game());
+		
+		
 	}
-	
+	public JButton getDrawButton()
+	{
+			return draw;
+	}
+	public JButton getResignButton()
+	{
+			return resign;
+	}
+	public JButton getSubmitButton()
+	{
+			return enterMove;
+	}
+	public JTextField getMoveField()
+	{
+			return moveField;
+	}
 	/**
 	 * Sets the game this GamePanel is based on to the passed-in game.
 	 * 

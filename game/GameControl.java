@@ -29,6 +29,11 @@ public class GameControl implements ActionListener
 		gp.setGame(chess);
 	}
 	
+	public ChatClient getClient ()
+	{
+		return client;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
