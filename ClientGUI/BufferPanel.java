@@ -1,29 +1,39 @@
 package ClientGUI;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
-public class BufferPanel extends JPanel
-{
-	private static final long serialVersionUID = -8532221569751838464L;
-	
+import game.GamePanel;
+
+public class BufferPanel extends JPanel{
+
 	private JButton newGame;
 	private JButton joinGame;
 	private JButton logout;
-	
+	private ChatClient client;
+	private JPanel container;
+
 	public BufferPanel(BufferControl bc)
 	{
+
+
 		newGame = new JButton("New Game");
-		newGame.addActionListener(bc);
 		joinGame = new JButton("Join Game");
-		joinGame.addActionListener(bc);
 		logout = new JButton("Log Out");
+		newGame.addActionListener(bc);
+		joinGame.addActionListener(bc);
 		logout.addActionListener(bc);
-		
 		JPanel grid = new JPanel(new GridLayout(3, 1, 5, 5));
 		grid.add(newGame);
 		grid.add(joinGame);
 		grid.add(logout);
 		this.add(grid);
+
 	}
+	
+	
+
 }

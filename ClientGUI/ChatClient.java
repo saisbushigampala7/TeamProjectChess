@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import game.Game;
+import game.GamePanel;
 import ocsf.client.AbstractClient;
 
 public class ChatClient extends AbstractClient
@@ -12,8 +13,10 @@ public class ChatClient extends AbstractClient
   // Private data fields for storing the GUI controllers.
   private LoginControl loginControl;
   private CreateAccountControl createAccountControl;
+  private BufferControl bufferControl;
   private Scanner in = new Scanner(System.in);	//I just need this for testing, once final product is ready DELETE this
   private Game chess;
+  private GamePanel gp;
   // Setters for the GUI controllers.
   public void setLoginControl(LoginControl loginControl)
   {
@@ -22,6 +25,14 @@ public class ChatClient extends AbstractClient
   public void setCreateAccountControl(CreateAccountControl createAccountControl)
   {
     this.createAccountControl = createAccountControl;
+  }
+  public void setBufferControl(BufferControl bufferControl)
+  {
+    this.bufferControl = bufferControl;
+  }
+  public void setGamePanel(GamePanel gamepanel)
+  {
+    this.gp = gamepanel;
   }
 
   // Constructor for initializing the client with default settings.
@@ -78,26 +89,28 @@ public class ChatClient extends AbstractClient
     else if (arg0 instanceof Game)
     {
     	//Set up board
-    	chess = (Game)arg0;
-    	System.out.print("\n\n");
-    	System.out.println(chess);
+//    	chess = (Game)arg0;
+//    	System.out.print("\n\n");
+//    	System.out.println(chess);
+//    	
+//    	//move is made
+//    	if (chess.isInCheck()) {
+//			System.out.println("Check!");
+//		}
+//		List<String> moves = chess.getAllLegalMoves();
+//		System.out.println("Legal moves: " + moves);
+//		String move = "";
+//		while (!moves.contains(move)) {
+//			System.out.print("Enter move: ");
+//			move = in.nextLine();
+//			if (move.equals("quit")) {
+//				System.exit(0);
+//			}
+//		}
+//		chess.makeMove(move);
+//		System.out.println(chess);
     	
-    	//move is made
-    	if (chess.isInCheck()) {
-			System.out.println("Check!");
-		}
-		List<String> moves = chess.getAllLegalMoves();
-		System.out.println("Legal moves: " + moves);
-		String move = "";
-		while (!moves.contains(move)) {
-			System.out.print("Enter move: ");
-			move = in.nextLine();
-			if (move.equals("quit")) {
-				System.exit(0);
-			}
-		}
-		chess.makeMove(move);
-		System.out.println(chess);
+    	
 		
 		//Send to Server
 		try
