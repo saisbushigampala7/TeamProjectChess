@@ -19,17 +19,17 @@ public class GameControl implements ActionListener
 	public GameControl(JPanel container, ChatClient client)
 	{
 		this.container = container;
-	    this.client = client;
+		this.client = client;
 	}
 	
-	public void setGame (Game chess)
+	public void setGame(Game chess)
 	{
 		GamePanel gp = (GamePanel)container.getComponent(4);
 		
 		gp.setGame(chess);
 	}
 	
-	public ChatClient getClient ()
+	public ChatClient getClient()
 	{
 		return client;
 	}
@@ -40,24 +40,18 @@ public class GameControl implements ActionListener
 		GamePanel gp = (GamePanel)container.getComponent(4);
 		String command = e.getActionCommand();
 		
-		// TODO: Integrate these with client/server
 		if (command == "Submit") {
-			if (client.getIsTurn())
-			{
+			if (client.getIsTurn()) {
 				gp.makeMove();
 				client.setIsTurn(false);
-				//Send to Server
-				try
-		 	     {
-		   			client.sendToServer(gp.getGame());
-		 	     }
-		 	     catch (IOException er)
-		 	     {
-		 	    	 er.printStackTrace();
-		 	    	  return;
-		 	     }
+				// Send to server
+				try {
+					client.sendToServer(gp.getGame());
+				} catch (IOException er) {
+					er.printStackTrace();
+					return;
+				}
 			}
-			
 		} else if (command == "Draw") {
 			Game game = gp.getGame();
 			game.declareDraw();

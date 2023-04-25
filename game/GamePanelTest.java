@@ -91,7 +91,6 @@ public class GamePanelTest
 		} catch (AWTException e1) {
 			e1.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -113,7 +112,6 @@ public class GamePanelTest
 		} catch (AWTException e1) {
 			e1.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -131,11 +129,10 @@ public class GamePanelTest
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		gp.getSubmitButton().doClick();
-		assertEquals("check Gamepanel GUI", testGame.getBoard(),
+		assertArrayEquals("check Gamepanel GUI", testGame.getBoard(),
 				gp.getGame().getBoard());
 	}
 }
