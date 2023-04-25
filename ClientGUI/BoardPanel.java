@@ -8,6 +8,8 @@ import game.*;
 /*
  *  Part of the code came is inspired from the following:
  *  https://www.roseindia.net/java/example/java/swing/chess-application-swing.shtml
+ *  
+ *  @author Sai S. Bushigampala
  */
 
 public class BoardPanel extends JFrame{

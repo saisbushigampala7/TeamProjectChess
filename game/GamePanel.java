@@ -26,6 +26,8 @@ public class GamePanel extends JFrame
 	private JPanel board;
 	private JTextField moveField;
 	private JButton enterMove;
+	private JButton draw;
+	private JButton resign;
 	
 	// Images
 	private BufferedImage[] images;
@@ -55,6 +57,7 @@ public class GamePanel extends JFrame
 					page.drawImage(images[board[i][j]], x, y, 60, 60, null);
 				}
 			}
+			
 		}
 	}
 	
@@ -74,6 +77,17 @@ public class GamePanel extends JFrame
 				JOptionPane.showMessageDialog(null, "Illegal move.",
 						"Illegal Move", JOptionPane.INFORMATION_MESSAGE);
 			}
+			
+			String command = e.getActionCommand();
+			if (command == "Draw" )
+			{
+				// Directs back to BufferPanel
+			}
+			else if (command == "Resign")
+			{
+				// Directs back to BufferPanel
+			}
+			
 		}
 	}
 	
@@ -82,10 +96,14 @@ public class GamePanel extends JFrame
 	 */
 	public GamePanel()
 	{
+		this.getContentPane().setBackground(Color.GRAY);
 		// Set up window
-		this.setLayout(null);
+		this.getContentPane().setLayout(null);
 		this.setTitle("Game");
+		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
 		
 		// Load images
 		// Code from: http://compsci.ca/v3/viewtopic.php?t=28197
@@ -124,6 +142,7 @@ public class GamePanel extends JFrame
 		board.setBounds(35, 0, 480, 480);
 		this.add(board);
 		
+		
 		// Create move entry text field and button
 		JLabel moveLabel = new JLabel("Enter move:", JLabel.RIGHT);
 		moveLabel.setBounds(50, 500, 150, 25);
@@ -136,9 +155,20 @@ public class GamePanel extends JFrame
 		enterMove.setBounds(350, 500, 150, 25);
 		this.add(enterMove);
 		
+		draw = new JButton("Draw");
+		draw.setBounds(21, 502, 85, 21);
+		this.add(draw);
+		draw.addActionListener(new EventHandler());
+		
+		resign = new JButton("Resign");
+		resign.setBounds(21, 532, 85, 21);
+		this.add(resign);
+		resign.addActionListener(new EventHandler());
+		
 		// Make window visible
 		this.setSize(550, 600);
 		this.setVisible(true);
+		
 		
 		// Set up game
 		this.setGame(new Game());

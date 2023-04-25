@@ -9,3 +9,16 @@
 /ClientGUI.class
 /InitialControl.class
 /InitialPanel.class
+/BoardPanel$1.class
+/Moves.class
+/BoardView.class
+/BoardDelegate.class
+/ChessDelegate.class
+/BoardPieces.class
+/Player.class
+/Rank.class
+/BoardModel.class
+/BoardConstants.class
+/ChessGameDemo.class
+/BufferPanel.class
+/BufferPanel$EventHandler.class
