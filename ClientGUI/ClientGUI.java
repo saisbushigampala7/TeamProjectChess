@@ -64,11 +64,12 @@ public class ClientGUI extends JFrame
 		
 		// Add the card layout container to the JFrame.
 		// GridBagLayout makes the container stay centered in the window.
-		this.setLayout(new GridBagLayout());
+		this.setLayout(null);
+		container.setBounds(25, 25, 650, 650);
 		this.add(container);
 		
 		// Show the JFrame.
-		this.setSize(550, 350);
+		this.setSize(700, 700);
 		this.setVisible(true);
 	}
 	
