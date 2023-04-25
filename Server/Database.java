@@ -25,14 +25,17 @@ public class Database
 		// Set the con object
 		
 		Properties prop = new Properties();
-		FileInputStream fis = new FileInputStream(fn);
+		
+		
+		try {
+			FileInputStream fis = new FileInputStream(fn);
 		prop.load(fis);
 		String url = prop.getProperty("url");
 		String user = prop.getProperty("user");
 		String pass = prop.getProperty("password");
 		
-		try {
-			con = DriverManager.getConnection(url, user, pass);
+		con = DriverManager.getConnection(url, user, pass);
+		
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
