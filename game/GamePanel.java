@@ -28,6 +28,10 @@ public class GamePanel extends JFrame
 	private JButton enterMove;
 	private JButton draw;
 	private JButton resign;
+	private JLabel horizontal;
+	private JLabel vertical;
+	private JLabel vertical2;
+	private JLabel drawLabel;
 
 	// Images
 	private BufferedImage[] images;
@@ -84,7 +88,8 @@ public class GamePanel extends JFrame
 			}
 			else if (command == "Draw" )
 			{
-				// Directs back to BufferPanel
+				drawLabel.setVisible(true);
+				moveField.setEditable(false);
 			}
 			else if (command == "Resign")
 			{
@@ -157,9 +162,14 @@ public class GamePanel extends JFrame
 		enterMove.addActionListener(new EventHandler());
 		enterMove.setBounds(350, 520, 150, 25);
 		this.add(enterMove);
+		
+		drawLabel = new JLabel("IT'S A DRAW!");
+		drawLabel.setBounds(200, 540, 150, 25);
+		drawLabel.setVisible(false);
+		this.add(drawLabel);
 
 		draw = new JButton("Draw");
-		draw.setBounds(21, 520, 85, 21);
+		draw.setBounds(21, 540, 85, 21);
 		this.add(draw);
 		draw.addActionListener(new EventHandler());
 
@@ -167,17 +177,17 @@ public class GamePanel extends JFrame
 		resign.setBounds(21, 550, 85, 21);
 		this.add(resign);
 		
-		JLabel lblNewLabel = new JLabel("A - H");
-		lblNewLabel.setBounds(223, 493, 85, 25);
-		this.add(lblNewLabel);
+		horizontal = new JLabel("A - H");
+		horizontal.setBounds(223, 493, 85, 25);
+		this.add(horizontal);
 		
-		JLabel lblNewLabel_1 = new JLabel("8");
-		lblNewLabel_1.setBounds(548, 0, 28, 59);
-		this.add(lblNewLabel_1);
+		vertical = new JLabel("8");
+		vertical.setBounds(548, 0, 28, 59);
+		this.add(vertical);
 		
-		JLabel lblNewLabel_2 = new JLabel("1");
-		lblNewLabel_2.setBounds(548, 428, 45, 33);
-		this.add(lblNewLabel_2);
+		vertical2 = new JLabel("1");
+		vertical2.setBounds(548, 428, 45, 33);
+		this.add(vertical2);
 		resign.addActionListener(new EventHandler());
 
 		// Make window visible
