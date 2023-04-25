@@ -10,6 +10,12 @@ public class Database
 	
 	// Add any other data fields you like – at least a Connection object is
 	// mandatory
+	
+	public Database()
+	{
+		
+	}
+	
 	public void setConnection(String fn) throws IOException
 	{
 		// Create a properties object
