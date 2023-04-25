@@ -1,6 +1,8 @@
 package game;
 
 import java.awt.event.*;
+import java.io.IOException;
+
 import javax.swing.*;
 import ClientGUI.*;
 
@@ -20,6 +22,13 @@ public class GameControl implements ActionListener
 	    this.client = client;
 	}
 	
+	public void setGame (Game chess)
+	{
+		GamePanel gp = (GamePanel)container.getComponent(4);
+		
+		gp.setGame(chess);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
@@ -28,7 +37,22 @@ public class GameControl implements ActionListener
 		
 		// TODO: Integrate these with client/server
 		if (command == "Submit") {
-			gp.makeMove();
+			if (client.getIsTurn())
+			{
+				gp.makeMove();
+				client.setIsTurn(false);
+				//Send to Server
+				try
+		 	     {
+		   			client.sendToServer(gp.getGame());
+		 	     }
+		 	     catch (IOException er)
+		 	     {
+		 	    	 er.printStackTrace();
+		 	    	  return;
+		 	     }
+			}
+			
 		} else if (command == "Draw") {
 			Game game = gp.getGame();
 			game.declareDraw();

@@ -102,52 +102,14 @@ public class ChatServer extends AbstractServer
 			LoginData data = (LoginData)arg0;
 			Object result = null;
 			// DATABASE STUFF, I'll uncomment once implemented
-			if (database.verifyAccount(data.getUsername(),
-					data.getPassword())) {
+			if (database.verifyAccount(data.getUsername(), data.getPassword())) {	// <-- comment this out for testing without database
+			//if (true) {	// <-- for testing without database, simply uncomment this and comment above line
 				result = "LoginSuccessful";
 				log.append("Client " + arg1.getId() +
 						" successfully logged in as " + data.getUsername() +
 						"\n");
-				if (player1 == null) {
-					player1 = arg1;
-					try {
-						player1.sendToClient(
-								"You are player 1!, waiting for second player\n");
-					} catch (IOException e) {
-						return;
-					}
-				} else if (player2 == null) {
-					chess = new Game();
-					// Player 2 send message then game
-					player2 = arg1;
-					try {
-						player2.sendToClient(
-								"Your opponent is Client " + player1.getId() +
-										" game begin!(Player 1's turn\n");
-					} catch (IOException e) {
-						return;
-					}
-					// Player 1 send message
-					try {
-						player1.sendToClient("Your opponent is Client " +
-								player2.getId() + " game begin!(Your turn)\n");
-					} catch (IOException e) {
-						return;
-					}
-					// Send game
-					try {
-						currentPlayer = player1;
-						player1.sendToClient(chess);
-					} catch (IOException e) {
-						return;
-					}
-				} else {
-					try {
-						arg1.sendToClient("Sorry, server full");
-					} catch (IOException e) {
-						return;
-					}
-				}
+				
+				
 			} else {
 				result = new Error("The username and password are incorrect.",
 						"Login");
@@ -160,6 +122,58 @@ public class ChatServer extends AbstractServer
 			} catch (IOException e) {
 				return;
 			}
+		}
+		
+		else if (arg0 instanceof String)
+		{
+			// Get the text of the message.
+		    String message = (String)arg0;
+		    if (message.equals("GameStart")) {
+		    	if (player1 == null) {
+				player1 = arg1;
+				try {
+					player1.sendToClient(
+							"You are player 1!, waiting for second player\n");
+				} catch (IOException e) {
+					return;
+				}
+			} else if (player2 == null) {
+				chess = new Game();
+				// Player 2 send message then game
+				player2 = arg1;
+				try {
+					player2.sendToClient(
+							"Your opponent is Client " + player1.getId() +
+									" game begin!(Player 1's turn\n");
+				} catch (IOException e) {
+					return;
+				}
+				// Player 1 send message
+				try {
+					player1.sendToClient("Your opponent is Client " +
+							player2.getId() + " game begin!(Your turn)\n");
+				} catch (IOException e) {
+					return;
+				}
+				// Send game
+				try {
+					currentPlayer = player1;
+					player1.sendToClient(chess);
+				} catch (IOException e) {
+					return;
+				}
+			} else {
+				try {
+					arg1.sendToClient("Sorry, server full");
+				} catch (IOException e) {
+					return;
+				}
+			}
+		  }
+		    else if (message.equals("Draw")) {
+		    	
+		    }
+			
 		}
 		
 		// If we received CreateAccountData, create a new account.
