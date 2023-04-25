@@ -17,30 +17,30 @@ import java.util.List;
 public class GamePanel extends JFrame
 {
 	private static final long serialVersionUID = -1478100234224270432L;
-	
+
 	// Game-related fields
 	private Game game;
 	private List<String> legalMoves;
-	
+
 	// Panel-related fields
 	private JPanel board;
 	private JTextField moveField;
 	private JButton enterMove;
 	private JButton draw;
 	private JButton resign;
-	
+
 	// Images
 	private BufferedImage[] images;
-	
+
 	private class BoardPanel extends JPanel
 	{
 		private static final long serialVersionUID = -5253230713362265205L;
-		
+
 		@Override
 		public void paintComponent(Graphics page)
 		{
 			super.paintComponent(page);
-			
+
 			int[][] board = game.getBoard();
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
@@ -57,29 +57,32 @@ public class GamePanel extends JFrame
 					page.drawImage(images[board[i][j]], x, y, 60, 60, null);
 				}
 			}
-			
+
 		}
 	}
-	
+
 	private class EventHandler implements ActionListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			String move = moveField.getText();
-			if (legalMoves.contains(move)) {
-				game.makeMove(move);
-				legalMoves = game.getAllLegalMoves();
-				moveField.setText("");
-				board.repaint();
-				endGameDialog();
-			} else {
-				JOptionPane.showMessageDialog(null, "Illegal move.",
-						"Illegal Move", JOptionPane.INFORMATION_MESSAGE);
-			}
-			
 			String command = e.getActionCommand();
-			if (command == "Draw" )
+			if (command == "Submit")
+			{
+				String move = moveField.getText();
+				if (legalMoves.contains(move)) {
+					game.makeMove(move);
+					legalMoves = game.getAllLegalMoves();
+					moveField.setText("");
+					board.repaint();
+					endGameDialog();
+				} else {
+					JOptionPane.showMessageDialog(null, "Illegal move.",
+							"Illegal Move", JOptionPane.INFORMATION_MESSAGE);
+				}
+
+			}
+			else if (command == "Draw" )
 			{
 				// Directs back to BufferPanel
 			}
@@ -87,10 +90,10 @@ public class GamePanel extends JFrame
 			{
 				// Directs back to BufferPanel
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * Creates a new GamePanel.
 	 */
@@ -100,11 +103,11 @@ public class GamePanel extends JFrame
 		// Set up window
 		this.getContentPane().setLayout(null);
 		this.setTitle("Game");
-		
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		
-		
+
+
+
 		// Load images
 		// Code from: http://compsci.ca/v3/viewtopic.php?t=28197
 		images = new BufferedImage[Game.COLOR_MASK];
@@ -136,44 +139,56 @@ public class GamePanel extends JFrame
 		} catch (IOException e) {
 			System.out.println("Error loading image: " + e);
 		}
-		
+
 		// Create board
 		board = new BoardPanel();
 		board.setBounds(35, 0, 480, 480);
 		this.add(board);
-		
-		
+
+
 		// Create move entry text field and button
 		JLabel moveLabel = new JLabel("Enter move:", JLabel.RIGHT);
-		moveLabel.setBounds(50, 500, 150, 25);
+		moveLabel.setBounds(50, 520, 150, 25);
 		this.add(moveLabel);
 		moveField = new JTextField("");
-		moveField.setBounds(200, 500, 150, 25);
+		moveField.setBounds(200, 520, 150, 25);
 		this.add(moveField);
 		enterMove = new JButton("Submit");
 		enterMove.addActionListener(new EventHandler());
-		enterMove.setBounds(350, 500, 150, 25);
+		enterMove.setBounds(350, 520, 150, 25);
 		this.add(enterMove);
-		
+
 		draw = new JButton("Draw");
-		draw.setBounds(21, 502, 85, 21);
+		draw.setBounds(21, 520, 85, 21);
 		this.add(draw);
 		draw.addActionListener(new EventHandler());
-		
+
 		resign = new JButton("Resign");
-		resign.setBounds(21, 532, 85, 21);
+		resign.setBounds(21, 550, 85, 21);
 		this.add(resign);
+		
+		JLabel lblNewLabel = new JLabel("A - H");
+		lblNewLabel.setBounds(223, 493, 85, 25);
+		this.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("8");
+		lblNewLabel_1.setBounds(548, 0, 28, 59);
+		this.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("1");
+		lblNewLabel_2.setBounds(548, 428, 45, 33);
+		this.add(lblNewLabel_2);
 		resign.addActionListener(new EventHandler());
-		
+
 		// Make window visible
-		this.setSize(550, 600);
+		this.setSize(590, 620);
 		this.setVisible(true);
-		
-		
+
+
 		// Set up game
 		this.setGame(new Game());
 	}
-	
+
 	/**
 	 * Sets the game this GamePanel is based on to the passed-in game.
 	 * 
@@ -186,7 +201,7 @@ public class GamePanel extends JFrame
 		this.board.repaint();
 		this.endGameDialog();
 	}
-	
+
 	/**
 	 * Displays a dialog containing the game result, if the game has ended.
 	 */
@@ -211,7 +226,7 @@ public class GamePanel extends JFrame
 		JOptionPane.showMessageDialog(null, message, "Game Result",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
 	/**
 	 * Displays a GamePanel for testing purposes.
 	 * 

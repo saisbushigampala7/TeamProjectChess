@@ -6,14 +6,20 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import game.GamePanel;
+
 public class BufferPanel extends JPanel{
 
 	private JButton newGame;
 	private JButton joinGame;
 	private JButton logout;
+	private ChatClient client;
+	private JPanel container;
 
-	public BufferPanel()
+	public BufferPanel(BufferControl bc)
 	{
+
+
 		newGame = new JButton("New Game");
 		joinGame = new JButton("Join Game");
 		logout = new JButton("Log Out");
@@ -26,27 +32,6 @@ public class BufferPanel extends JPanel{
 
 	}
 	
-	private class EventHandler implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			String command = e.getActionCommand();
-			
-			if(command == "New Game")
-			{
-				// Starts a New Game
-			}
-			else if (command == "Join Game")
-			{
-				// Joins an Existing Game
-			}
-			else if (command == "Log Out")
-			{
-				// Redirects back to Initial Panel, and logs out. 
-			}
-			
-		}
-	}
+	
 
 }
