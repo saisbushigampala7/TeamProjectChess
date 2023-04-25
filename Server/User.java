@@ -11,6 +11,7 @@ public class User implements Serializable
   private String username;
   private String password;
   
+  
   // Getters for the username and password.
   public String getUsername()
   {
