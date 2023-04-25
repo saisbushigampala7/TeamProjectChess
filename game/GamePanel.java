@@ -69,6 +69,10 @@ public class GamePanel extends JFrame
 				legalMoves = game.getAllLegalMoves();
 				moveField.setText("");
 				board.repaint();
+				endGameDialog();
+			} else {
+				JOptionPane.showMessageDialog(null, "Illegal move.",
+						"Illegal Move", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 	}
@@ -150,6 +154,32 @@ public class GamePanel extends JFrame
 		this.game = game;
 		this.legalMoves = game.getAllLegalMoves();
 		this.board.repaint();
+		this.endGameDialog();
+	}
+	
+	/**
+	 * Displays a dialog containing the game result, if the game has ended.
+	 */
+	public void endGameDialog()
+	{
+		if (!this.game.gameEnded()) {
+			return;
+		}
+		int result = this.game.getResult();
+		String message = "";
+		switch (result) {
+		case Game.WHITE:
+			message = "White has won the game!";
+			break;
+		case Game.BLACK:
+			message = "Black has won the game!";
+			break;
+		case Game.DRAW:
+			message = "The game has ended in a draw!";
+			break;
+		}
+		JOptionPane.showMessageDialog(null, message, "Game Result",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	/**
